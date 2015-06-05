@@ -1,2 +1,2 @@
 # CorrelEstimator
-Tool tu compute Kendall correlation in C# and Q
+Tool to compute Kendall correlation in C# and Q
