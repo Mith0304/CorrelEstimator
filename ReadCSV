@@ -1,0 +1,53 @@
+ //Read CSV and compare with the tickerlist
+        public List<Price> ReadCSV(string[] tickers)
+        {
+            //Read CSV in this folder
+            string csv = @"C:\q\data\Prix.csv";
+
+            //Initialisation
+            string reader = File.ReadAllText(csv);
+            string[] rows = reader.Replace("\r", "").Split('\n');
+            List<Price> PriceList = new List<Price>();
+            int k;
+            
+            try
+            {
+                //Read tickers in ticker list
+                for (int i = 0; i < tickers.Length; i++)
+                {
+                    double[] price = new double[rows.Length - 2];
+                    string[] cols = rows[0].Split(';');
+                    k = 0;
+
+                    //Reads the CSV header
+                    for (int j = 0; j < cols.Length; j++)
+                    {
+                        //Comparison between tickers in the tickerlist and the header
+                        if (tickers[i] == cols[j])
+                        {
+                            foreach (string row in rows)
+                            {
+                                if (string.IsNullOrEmpty(row)) continue;
+                                if (row == rows.ElementAt(0)) continue;
+                                cols = row.Split(';');
+
+                                price[k] = double.Parse(cols[j], System.Globalization.CultureInfo.InvariantCulture);
+                                k++;
+                            }
+
+                            //If they match, add price in the price list
+                            PriceList.Add(new Price
+                            {
+                                close = price
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                Environment.Exit(0);
+            }
+            return PriceList;
+        }        
