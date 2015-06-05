@@ -1,0 +1,59 @@
+//Save the parsed CSV
+        public static void SaveIntoCSV(List<Price> ParseCSV, string[] tickers)
+        {
+            //Save CSV in this folder
+            string filePath = @"C:\q\data\Prix.csv";
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Close();
+            }
+            else
+            {
+                File.WriteAllText(filePath, string.Empty);
+            }
+
+            //Initialisation
+            StringBuilder sb = new StringBuilder();
+            string[,] csv = new string[2 * ParseCSV.Count, ParseCSV[0].close.LongLength];
+
+            try
+            {
+                //Add prices and dates in the matrix
+                for (int i = 0; i < ParseCSV.Count; i++)
+                {
+                    for (int j = 0; j < ParseCSV[i].close.LongLength; j++)
+                    {
+                        csv[2 * i + 1, j] = "" + ParseCSV[i].close[j].ToString(CultureInfo.CreateSpecificCulture("en-GB"));
+                        csv[i * 2, j] = "" + String.Format("{0:MM/dd/yyyy}", ParseCSV[i].date[j]);
+                    }
+                }
+                
+                //Add matrix in the csv
+                using (StreamWriter outfile = new StreamWriter(filePath))
+                {
+                    string content = "";
+
+                    //Add headers                    
+                    for (int i = 0; i < tickers.Length; i++)
+                    {
+                        content += "Date" + ";" + tickers[i] + ";";
+                    }
+                    outfile.WriteLine(content);
+
+                    //Add prices and dates
+                    for (int k = 1; k <= csv.GetLength(1); k++)
+                    {
+                        content = "";
+                        for (int l = 0; l < csv.GetLength(0); l++)
+                        {
+                            content += csv[l, k - 1] + ";";
+                        }
+                        outfile.WriteLine(content);
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                MessageBox.Show(" Erreur : " + exp.Message);
+            }
+        }
