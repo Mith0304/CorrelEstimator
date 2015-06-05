@@ -1,0 +1,35 @@
+//Convert CSV into matrix
+        public static Price Parse(string csvData)
+        {
+            //Initialisation
+            string[] rows = csvData.Replace("\r", "").Split('\n');
+            Price price = new Price();
+            price.date = new DateTime[rows.Length - 2]; 
+            price.close = new double[rows.Length - 2];
+            int i = 0;
+
+            try
+            {
+                //Read CSV
+                foreach (string row in rows)
+                {
+                    //Avoid empty data
+                    if (string.IsNullOrEmpty(row)) continue;
+                    //Avoid header
+                    if (row.StartsWith("Date") == true) continue;
+                    //Clean CSV and split columns
+                    string[] cols = row.Replace("\"","").Split(',');
+
+                    //Add dates and close into the price object
+                    price.date[i] = Convert.ToDateTime(cols[0], CultureInfo.InvariantCulture);
+                    price.close[i] = double.Parse(cols[4], CultureInfo.InvariantCulture);
+                    i++;
+                }
+                return price;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            return price;
+        }
