@@ -1,0 +1,27 @@
+public static double Kendall_Formula(double[] Ticker1, double[] Ticker2)
+        {
+            double NbrConcord, NbrDiscord, S;
+            NbrConcord = 0;
+            NbrDiscord = 0;
+            S = 0;
+
+            for (int i = 0; i < Ticker1.Length - 1; i++)
+            {
+                for (int j = i + 1; j < Ticker1.Length; j++)
+                {
+                    //Compute the number of concordant pairs
+                    if (((Ticker1[i] < Ticker1[j]) & (Ticker2[i] < Ticker2[j])) | ((Ticker1[i] > Ticker1[j]) & (Ticker2[i] > Ticker2[j])))
+                    {
+                        NbrConcord++;
+                    }
+                    //Compute the number of discordant pairs
+                    else if (((Ticker1[i] > Ticker1[j]) & (Ticker2[i] < Ticker2[j])) | ((Ticker1[i] < Ticker1[j]) & (Ticker2[i] > Ticker2[j])))
+                    {
+                        NbrDiscord++;
+                    }
+                }
+            }
+            S = NbrConcord - NbrDiscord;
+            //Proportion with the total pairs
+            return 2 * S / (Ticker1.Length * (Ticker1.Length - 1));
+        }
