@@ -1,0 +1,39 @@
+//Create Q code for KDB implementation in TXT
+        public static void SaveIntoTxt(string[] tickers)
+        {
+            //Reads CSV to determine the number of tickers
+            string csv = @"C:\q\data\Prix.csv";
+
+            //Initialisation
+            string reader = File.ReadAllText(csv);
+            string[] rows = reader.Replace("\r", "").Split('\n');
+            string[] cols = rows[0].Split(';');
+            //TXT file
+            string filePath = @"C:\q\data\CodeKdB.txt";
+            string colZF = "";
+
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Close();
+            }
+            else if (File.Exists(filePath))
+            {
+                File.WriteAllText(filePath, string.Empty);
+            }
+
+            //Add the number of columns of dates (Z) and prices (F)
+            for (int i = 0; i < (cols.Length - 1) / 2; i++)
+            {
+                colZF = colZF + "ZF";
+            }
+
+            using (StreamWriter outfile = new StreamWriter(filePath))
+            {
+                //Q Code
+                outfile.WriteLine("cd C:\\q");
+                outfile.WriteLine("w32\\q");
+                outfile.WriteLine("t:(\"" + colZF + "\";enlist\";\") 0: `:c:/q/data/Prix.csv");
+                outfile.WriteLine("Kendall : { [ListA;ListB] now:.z.T;a:0;b:0;S:0;i:0;j:1;do[(count t)-2;do[(count t)+(-1-i);if[((t[i;ListA]<t[j;ListA])&(t[i;ListB]<t[j;ListB]))|((t[i;ListA]>t[j;ListA])&(t[i;ListB]>t[j;ListB]));a:a+1];if[((t[i;ListA]<t[j;ListA])&(t[i;ListB]>t[j;ListB]))|((t[i;ListA]>t[j;ListA])&(t[i;ListB]<t[j;ListB]));b:b+1];j:j+1];i:i+1;j:1+i];S:a-b;K:2*S%(((count t) - 1)*(count t));time:.z.T-now;(K,time)}");
+                outfile.WriteLine("Kendall[`" + tickers[0] + ";`" + tickers[1] + "]");
+            }
+        }
