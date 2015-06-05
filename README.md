@@ -2,8 +2,8 @@
 Tool to compute Kendall correlation between pairs of tickers in C# and Q
 
 
-  # If the user has no CSV
-  GetQuotes: Download CSV via Yahoo!Finances
+If the user has no CSV
+  #GetQuotes: Download CSV via Yahoo!Finances
   Parse: Clean CSV and select only dates and close prices
   SaveIntoCSV: Save data in a new CSV
   
