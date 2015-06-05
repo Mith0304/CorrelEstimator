@@ -1,0 +1,56 @@
+//Download historical data from Yahoo!Finances and affect padding
+        public static List<Price> GetQuotes(string[] tickers, DateTime startDate, DateTime endDate, int padding)
+        { 
+            //Initialisation
+            string csvData;
+            List<Price> PriceList = new List<Price>();
+            List<Price> PriceListPadding = new List<Price>();
+            Price price = new Price();
+
+            using (WebClient web = new WebClient())
+            {
+                try
+                {
+                    for (int i = 0; i < tickers.Length; i++)
+                    {
+                        csvData = web.DownloadString("http://ichart.yahoo.com/table.csv?s=" + tickers[i] + "&a=" + (startDate.Month - 1) + "&b=" + startDate.Day + "&c=" + startDate.Year + "&d=" + (endDate.Month - 1) + "&e=" + endDate.Day + "&f=" + endDate.Year + "&g=d&ignore=.csv");
+                        //Call Parse Function
+                        price = Parse(csvData);
+                        //Add result in the PriceList
+                        PriceList.Add(price);
+                    }
+                }
+
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    Environment.Exit(0);
+                }
+            }
+
+            //Determine if a ticker has less data and adjust the size between the tickers
+            int l = PriceList[0].close.Length;
+            for (int m = 0; m < PriceList.Count; m++)
+            {
+                l = Math.Min(l, PriceList[m].close.Length);
+            }
+
+            //Affect padding
+            for (int k = 0; k < PriceList.Count; k++)
+            {
+                double[] closePadding = new double[l / padding];
+                DateTime[] datePadding = new DateTime[l / padding];
+
+                for (int j = 0; j < closePadding.Length; j++)
+                {
+                    closePadding[j] = PriceList[k].close[j * padding];
+                    datePadding[j] = PriceList[k].date[j * padding];
+                }
+                PriceListPadding.Add(new Price
+                {
+                    date = datePadding,
+                    close = closePadding
+                });
+            }
+            return PriceListPadding;
+        }
